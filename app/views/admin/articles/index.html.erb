@@ -1,0 +1,42 @@
+<h1>Listing articles</h1>
+
+<table>
+  <tr>
+    <th>Title</th>
+    <th>User</th>
+    <th>Language</th>
+    <th>Path name</th>
+    <th>Menu name</th>
+    <th>Header name</th>
+    <th>Titlebar name</th>
+    <th>Description</th>
+    <th>Keywords</th>
+    <th>Content</th>
+  </tr>
+
+<% for article in @articles %>
+  <tr>
+    <td><%=h article.title %></td>
+    <td><%=h article.user_id %></td>
+    <td><%=h article.language_id %></td>
+    <td><%=h article.path_name %></td>
+    <td><%=h article.menu_name %></td>
+    <td><%=h article.header_name %></td>
+    <td><%=h article.titlebar_name %></td>
+    <td><%=h article.description %></td>
+    <td><%=h article.keywords %></td>
+    <td><%=h article.short_content_without_html %></td>
+		<td><%= link_to 'Preview', article_path(article.path_name) %></td>
+    <td><%= link_to 'Show', admin_article_path(article) %></td>
+    <td><%= link_to 'Edit', edit_admin_article_path(article) %></td>
+    <td><%= link_to 'Destroy', admin_article_path(article), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+
+
+
+<%= link_to 'New article', new_admin_article_path %>

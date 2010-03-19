@@ -1,0 +1,50 @@
+<%= javascript_include_tag "articles_tiny_mce/tiny_mce" %>
+<%= javascript_include_tag 'articles_tinymce_config' %>
+
+<h1>New article</h1>
+
+<% form_for ([:admin,@article]) do |f| %>
+  <%= f.error_messages %>
+  <%= f.hidden_field :parent_id %>
+  <p>
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </p>
+	  <p>
+    <%= f.label :content %><br />
+    <%= f.text_area :content, :id=>"tiny_mce", :rows=>"20", :cols=>"30", :class=>"tiny_mce" %>
+  </p>
+  <p>
+    <%= f.label :language_id %><br />
+    <%= f.text_field :language_id %>
+  </p>
+  <p>
+    <%= f.label :path_name %><br />
+    <%= f.text_field :path_name %>
+  </p>
+  <p>
+    <%= f.label :menu_name %><br />
+    <%= f.text_field :menu_name %>
+  </p>
+  <p>
+    <%= f.label :header_name %><br />
+    <%= f.text_field :header_name %>
+  </p>
+  <p>
+    <%= f.label :titlebar_name %><br />
+    <%= f.text_field :titlebar_name %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+  <p>
+    <%= f.label :keywords %><br />
+    <%= f.text_field :keywords %>
+  </p>
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', admin_articles_path %>

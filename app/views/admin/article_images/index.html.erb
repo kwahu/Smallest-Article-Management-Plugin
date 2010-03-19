@@ -1,0 +1,180 @@
+<%= javascript_include_tag 'tiny_mce/tiny_mce_popup' %>
+
+		
+<p style="color: green"><%= flash[:notice] %></p>
+
+<%= error_messages_for :article_image %>
+		
+<h2>New image</h2>
+
+<div>
+	<% form_for( :article_image, :url => admin_article_images_path, :method => :post, :html => { :multipart => true }) do |f| %>
+		<%= f.hidden_field :article_image_category_id, :value => @selected_category.id %>
+		<p>
+			<label for="article_image">Choose file:</label>
+			<%= f.file_field :uploaded_data, :size => 65, :onchange => "file_changed();" %>
+		</p>
+		<p>
+			<label for="article_image">Name:</label>
+			<%= f.text_field :name, :size => 24 %>
+		</p>
+		<p>
+			<%= submit_tag 'Add image' %>
+		</p>
+	<% end %>
+</div>
+
+
+<h2>Select image</h2>
+
+<div>
+	<% form_tag( admin_article_images_path, :method => :get ) do  %>    
+		Select category
+	
+		<select id="selected_category_id" name="selected_category_id" tabindex="8" onchange="submit();">
+			<%= category_tree_select_box @image_categories, @selected_category.id %>
+		</select>
+	
+		<span id="destroy_category" style="display: none;">
+			[<%= link_to " D ", admin_article_image_category_path(@selected_category), :confirm => 'Are you sure?', :method => :delete %>]
+		</span>
+	
+		<%= link_to_function "More...", "FileManagerEditForm.toggle_category_extra_fields(this)", :id=>'more-options' %>
+	
+	<% end %>
+					
+	<span id="create_category" style="display: none; ">
+		<% form_for( :article_image_category, :url => admin_article_image_categories_path, :method => :post) do |f| %>
+									
+			New subcategory
+			<%= f.hidden_field :parent_id, :value => @selected_category.id %>
+			<%= f.text_field :name, :size => 20 %>
+		
+			<%= submit_tag 'Create' %>
+		
+		<% end %>
+	</span>
+</div>
+
+
+<div style="width: 100%; height: 400px;border: 1px solid black;">
+	<p>
+		<div class="thumbnails">
+			<% for image in @images %>
+								
+				<div class="thumb" id="thumb_<%= image.id -%>" style="float: left;  margin: 0 5px 5px 0; width: 100px; height: 100px; font-family: verdana;font-size: 9px;">
+					<a href="javascript:void(0)" onclick="submit_image('<%= image.public_filename %>');">
+						<%= image_tag(image.public_filename(:thumb))%> <br />
+						<%= image.name || "n/d" %></a><span>
+						<%= link_to_remote 'Del', :url => admin_article_image_path(image), :confirm => 'Are you sure?', :method => :delete %>     
+					</span>
+				</div>
+			<% end %>
+		</div>
+	</p>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+	function submit_image(image_id) {
+		var URL = image_id;
+		var win = tinyMCEPopup.getWindowArg("window");
+
+		// insert information now
+		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
+
+		// for image browsers: update image dimensions
+		if (win.ImageDialog.getImageData) win.ImageDialog.getImageData();
+		if (win.ImageDialog.showPreviewImage) win.ImageDialog.showPreviewImage(URL);
+
+		// close popup window
+		tinyMCEPopup.close();
+	}
+
+	function file_changed() {
+		var titlePanel, file;
+
+		file = document.getElementById('article_image_uploaded_data');
+		if (file.value != '') {
+			var title, start, end, fileName;
+			title = document.getElementById('article_image_name');
+			start = file.value.lastIndexOf('\\');
+			if (start == -1) {
+				start = file.value.lastIndexOf('/');
+			}
+			start++;
+			end = file.value.lastIndexOf('.');
+			if ((end == -1) || (end < start)) {
+				end = file.value.length;
+			}
+			fileName = file.value.substring(start, end);
+
+			title.value = fileName;
+		}
+	}
+
+
+	var FileManagerEditForm = {
+
+		// Todo: Make the meta fields remember their visibility?
+		toggle_category_extra_fields : function(anchor) {
+			if(anchor.innerHTML == "More...") {
+				Show.these(
+				'destroy_category',
+				'create_category'
+			);
+				anchor.innerHTML = 'Less...';
+			} else {
+				Hide.these(
+				'destroy_category',
+				'create_category'
+			);
+				anchor.innerHTML = 'More...';
+			}
+		}
+	}
+
+
+	var ArticleCategoriesEditForm = {
+
+		// Todo: Make the meta fields remember their visibility?
+		toggle_category_extra_fields : function(anchor) {
+			if(anchor.innerHTML == "More...") {
+				Show.these(
+				'destroy_category',
+				'create_category'
+			);
+				anchor.innerHTML = 'Less...';
+			} else {
+				Hide.these(
+				'destroy_category',
+				'create_category'
+			);
+				anchor.innerHTML = 'More...';
+			}
+		}
+	}
+
+
+	var Hide = {
+		these : function() {
+			for (var i = 0; i < arguments.length; i++) {
+				try {
+					$(arguments[i]).hide();
+				} catch (e) {}
+			}
+		}
+	}
+
+	var Show = {
+		these : function() {
+			for (var i = 0; i < arguments.length; i++) {
+				//      try {
+				$(arguments[i]).show();
+				//      } catch (e) {}
+			}
+		}
+	}
+
+</script>
